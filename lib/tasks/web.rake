@@ -11,7 +11,7 @@ namespace :web do
     headers = %W[position name gender]
     CSV.open(Rails.root + "db/seeds/navneguiden_girls.csv", "w", headers: headers, write_headers: true) do |csv|
       PAGES.times do |page|
-        spin(page+1, PAGES, speed: 1)
+        Spinner.spin(page+1, PAGES, speed: 1)
 
         url = "https://www.navneguiden.dk/populaere-pigenavne?page=#{page+1}"
         response = HTTParty.get(url)
@@ -35,7 +35,7 @@ namespace :web do
     headers = %W[position name gender]
     CSV.open(Rails.root + "db/seeds/navneguiden_boys.csv", "w", headers: headers, write_headers: true) do |csv|
       PAGES.times do |page|
-        spin(page+1, PAGES, speed: 1)
+        Spinner.spin(page+1, PAGES, speed: 1)
 
         url = "https://www.navneguiden.dk/populaere-drengenavne?page=#{page+1}"
         response = HTTParty.get(url)

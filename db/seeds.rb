@@ -17,7 +17,7 @@ def seed_names_from_familieretshuset(filename)
     end
 
     names << Name.new(name: row["Navn"], gender:)
-    spin(index+1, size)
+    Spinner.spin(index+1, size)
   end
 
   Name.import(names, on_duplicate_key_ignore: true)
@@ -35,7 +35,7 @@ def seed_names_from_navneguiden(filename)
     gender = "male" if row["gender"] == "100"
 
     names << Name.new(name: row["name"], gender:)
-    spin(index+1, size)
+    Spinner.spin(index+1, size)
   end
 
   Name.import(names, on_duplicate_key_ignore: true)
