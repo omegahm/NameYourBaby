@@ -56,6 +56,6 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  gem "httparty", "~> 0.23.0"
+  gem "httparty", "~> 0.23.1"
   gem "nokogiri", "~> 1.18"
 end
