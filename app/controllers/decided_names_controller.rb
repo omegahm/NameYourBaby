@@ -1,7 +1,7 @@
 class DecidedNamesController < ApplicationController
   def index
-    @liked_names = DecidedName.liked(Current.user)
-    @agreed_names = Name.agreed.order(:name)
+    @agreed_names = Name.agreed.order(:name).to_a
+    @liked_names = DecidedName.includes(:name).liked(Current.user).to_a
   end
 
   def destroy

@@ -11,16 +11,7 @@ class Name < ApplicationRecord
   }
 
   scope :agreed, -> do
-    # Get total number of users
-    user_count = User.count
-
-    # Find names that have been liked by all users
-    liked_by_all = DecidedName.where(decision: true)
-                             .group(:name_id)
-                             .having("COUNT(DISTINCT user_id) = ?", user_count)
-                             .select(:name_id)
-
-    where(id: liked_by_all)
+    where(id: DecidedName.liked_by_all.select(:name_id))
   end
 
   class << self
