@@ -1,7 +1,7 @@
 require_relative "../spinner"
 
 namespace :web do
-  PAGES = 20 # there's 30 names per page
+  PAGES = 33 # there's 30 names per page
 
   desc "Scrape navneguiden.dk"
   task scrape: %I[ environment scrape_girls scrape_boys ]

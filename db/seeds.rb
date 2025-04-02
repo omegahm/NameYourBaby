@@ -56,5 +56,5 @@ puts "Seeding names..."
 # seed_names_from_familieretshuset("db/pige-navne.csv")
 # seed_names_from_familieretshuset("db/drenge-navne.csv")
 seed_names_from_navneguiden("db/seeds/navneguiden_boys.csv")
-seed_names_from_navneguiden("db/seeds/navneguiden_girls.csv")
+# seed_names_from_navneguiden("db/seeds/navneguiden_girls.csv")
 puts "Done seeding names!"
