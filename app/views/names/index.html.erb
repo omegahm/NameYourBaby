@@ -1,5 +1,5 @@
-<div class="flex place-content-center w-full absolute bottom-32">
-  <div class="card card-border border-4 bg-base-100 w-2/3 h-64 md:w-1/6 border-<%= @name.gender_color %>">
+<div id="touchable" class="flex place-content-center w-full fixed bottom-32">
+  <div class="card card-border border-4 bg-base-100 w-2/3 h-72 md:w-1/6 border-<%= @name.gender_color %>">
     <div class="card-body">
       <h1 class="mx-auto card-title text-3xl">
         <%= @name.name %>
@@ -25,3 +25,86 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const voteNo = document.getElementById("vote-no");
+    const voteYes = document.getElementById("vote-yes");
+
+    function turboPost(element, url) {
+      element.querySelector(".card-body").innerHTML = '<span class="loading loading-ring loading-xl place-self-center h-full"></span>';
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+        },
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          throw new Error("Network response was not ok");
+        }
+      })
+    }
+
+    const touchable = document.getElementById("touchable");
+
+    let startX = null;
+    let swipeDirection = null;
+    let distX = 0
+
+    touchable.addEventListener("touchstart", function(event) {
+      const touchObject = event.changedTouches[0];
+      startX = touchObject.pageX;
+
+      event.preventDefault();
+    }, false);
+
+    touchable.addEventListener("touchmove", function(event) {
+      const touchObject = event.changedTouches[0];
+      distX = touchObject.pageX - startX;
+
+      swipeDirection = distX > 0 ? "right" : "left";
+      touchable.style.setProperty("left", `${distX}px`);
+      touchable.style.setProperty("transform", `rotate(${distX / 20}deg)`);
+
+      if (swipeDirection === "left") {
+        if (distX < -100) {
+          document.querySelector("html").style.setProperty("background", "var(--color-accent)");
+          voteNo.classList.remove("hidden");
+        } else {
+          document.querySelector("html").style.removeProperty("background");
+          voteNo.classList.add("hidden");
+        }
+      } else if (swipeDirection === "right") {
+        if (distX > 100) {
+          document.querySelector("html").style.setProperty("background", "var(--color-primary)");
+          voteYes.classList.remove("hidden");
+        } else {
+          document.querySelector("html").style.removeProperty("background");
+          voteYes.classList.add("hidden");
+        }
+      }
+
+      event.preventDefault();
+    }, false);
+
+    touchable.addEventListener("touchend", function(event) {
+      if (swipeDirection === "left" && distX < -100) {
+        turboPost(touchable, "<%= vote_name_path(@name, decision: 'no') %>");
+      } else if (swipeDirection === "right" && distX > 100) {
+        turboPost(touchable, "<%= vote_name_path(@name, decision: 'yes') %>");
+      } else {
+        touchable.style.removeProperty("left");
+        touchable.style.removeProperty("transform");
+        document.querySelector("html").style.removeProperty("background");
+      }
+
+      startX = null;
+      swipeDirection = null;
+      dist = 0;
+    }, false);
+  });
+</script>
