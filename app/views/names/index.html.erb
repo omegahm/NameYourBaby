@@ -31,8 +31,10 @@
     const voteNo = document.getElementById("vote-no");
     const voteYes = document.getElementById("vote-yes");
 
+    const touchable = document.getElementById("touchable");
+
     function turboPost(element, url) {
-      element.querySelector(".card-body").innerHTML = '<span class="loading loading-ring loading-xl place-self-center h-full"></span>';
+      touchable.querySelector(".card-body").innerHTML = '<span class="loading loading-ring loading-xl place-self-center h-full"></span>';
 
       fetch(url, {
         method: "POST",
@@ -49,20 +51,19 @@
       })
     }
 
-    const touchable = document.getElementById("touchable");
-
     let startX = null;
     let swipeDirection = null;
     let distX = 0
+    let moved = false
 
-    touchable.addEventListener("touchstart", function(event) {
+    function touchstart(event){
       const touchObject = event.changedTouches[0];
       startX = touchObject.pageX;
-
       event.preventDefault();
-    }, false);
+    }
 
-    touchable.addEventListener("touchmove", function(event) {
+    function touchmove(event) {
+      moved = true
       const touchObject = event.changedTouches[0];
       distX = touchObject.pageX - startX;
 
@@ -89,9 +90,23 @@
       }
 
       event.preventDefault();
-    }, false);
+    }
 
-    touchable.addEventListener("touchend", function(event) {
+    function touchend(event) {
+      if (!moved) {
+        const elem = event.changedTouches[0];
+        let target = elem.target
+
+        if (target.tagName.toString().toUpperCase() === "SVG") {
+          target = target.parentElement;
+        }
+
+        if (target.tagName.toString().toUpperCase() === "A") {
+          turboPost(touchable, target.href);
+          return;
+        }
+      }
+
       if (swipeDirection === "left" && distX < -100) {
         turboPost(touchable, "<%= vote_name_path(@name, decision: 'no') %>");
       } else if (swipeDirection === "right" && distX > 100) {
@@ -105,6 +120,11 @@
       startX = null;
       swipeDirection = null;
       dist = 0;
-    }, false);
+      moved = false;
+    }
+
+    touchable.addEventListener("touchstart", touchstart, false);
+    touchable.addEventListener("touchmove", touchmove, false);
+    touchable.addEventListener("touchend", touchend, false);
   });
 </script>
