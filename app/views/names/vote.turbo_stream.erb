@@ -1,0 +1,3 @@
+<%= turbo_stream.replace("names") do %>
+  <%= render partial: "name", locals: { name: @name } %>
+<% end %>
